@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/stellantisCar"
+        android:orderInCategory="100"
+        android:title="@string/stellantisCar"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/otherCar"
+        android:orderInCategory="100"
+        android:title="@string/otherCar"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/moveCar"
+        android:orderInCategory="100"
+        android:title="@string/moveCar"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/TCU"
+        android:orderInCategory="100"
+        android:title="@string/tcu"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/crash"
+        android:orderInCategory="100"
+        android:title="@string/crash"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+</menu>

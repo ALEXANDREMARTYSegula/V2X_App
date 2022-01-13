@@ -1,0 +1,38 @@
+<resources>
+
+    <string name="app_name">V2X</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+
+    <string name="access_token">sk.eyJ1IjoiZmNiYXNtIiwiYSI6ImNrd25sOGxjbDBqbmEycHF0cWtnaXV1bnYifQ.-ful9Mzei-dTkD6QKaLkoQ</string>
+
+    <string name="languageFR">FR</string>
+    <string name="languageEN">EN</string>
+
+    <string name="stellantisCar">Stellantis</string>
+    <string name="otherCar">Other</string>
+    <string name="moveCar">Move Car</string>
+    <string name="crash">Alert</string>
+    <string name="tcu">TCU</string>
+
+    <string name="accident">Crash </string>
+    <string name="crashat">Crash at </string>
+    <string name="infoat">Information at </string>
+    <string name="idcar1">1 </string>
+    <string name="idcar2">2 </string>
+    <string name="idCar">ID : </string>
+    <string name="Date">Date : </string>
+    <string name="Heure">Hour : </string>
+    <string name="Position">Position : </string>
+    <string name="Puissance">Power : </string>
+    <string name="ECU">ECU : </string>
+
+</resources>
