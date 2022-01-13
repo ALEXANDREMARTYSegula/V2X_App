@@ -7,6 +7,55 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
+    <Button
+        android:id="@+id/btnStellantis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="46dp"
+        android:backgroundTint="@color/mapbox_blue"
+        android:text="@string/stellantisCar"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnOther"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:backgroundTint="@color/mapbox_blue"
+        android:text="@string/otherCar"
+        mapbox:layout_constraintStart_toEndOf="@+id/btnStellantis"
+        mapbox:layout_constraintTop_toTopOf="@+id/mapview" />
+
+    <Button
+        android:id="@+id/btnConnectionTCU"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:backgroundTint="@color/mapbox_blue"
+        android:text="@string/tcu"
+        mapbox:layout_constraintStart_toEndOf="@+id/btnOther"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btnMoveCar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:backgroundTint="@color/mapbox_blue"
+        android:text="@string/moveCar"
+        mapbox:layout_constraintStart_toEndOf="@+id/btnConnectionTCU"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btnCrash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:backgroundTint="@color/mapbox_blue"
+        android:text="@string/crash"
+        app:layout_constraintStart_toEndOf="@+id/btnMoveCar" />
+
     <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/mapview"
         android:layout_width="match_parent"
