@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -33,6 +34,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.mapbox.geojson.Polygon;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -171,7 +175,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         drawPolygonCircle(positionCar);
                     });
 
-            btnStellantis = requireView().findViewById(R.id.stellantisCar);
+
+
+            btnStellantis = requireView().findViewById(R.id.btnStellantis);
             btnStellantis.setOnClickListener(v -> {
                 stellantisId ++;
                 LatLng carStellantis = new LatLng(48.80043011689067,1.978732392194232);
@@ -182,7 +188,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
             });
 
-            btnOther = requireView().findViewById(R.id.otherCar);
+            btnOther = requireView().findViewById(R.id.btnOther);
             btnOther.setOnClickListener(v -> {
                 LatLng carOther = new LatLng(48.796768,1.978605);
                 LatLng carOther2 = new LatLng(48.798772218369194,1.9941396447244915);
@@ -190,16 +196,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 //OtherCar(carOther, carOther2, Integer.toString(R.string.idcar2));
             });
 
-            btnTCU = requireView().findViewById(R.id.TCU);
+            btnTCU = requireView().findViewById(R.id.btnConnectionTCU);
             btnTCU.setOnClickListener(v -> {
                 tcuConnected = 1;
-                btnWaiting.setVisibility(View.GONE);
+                //btnWaiting.setVisibility(View.GONE);
                 LatLng carStellantis2 = new LatLng(48.798734,2.000806);
                 markerDisplay(1,1,carStellantis2);
                 //chooseMapStyle(tcuConnected,posCar, Integer.toString(R.string.idcar1));
             });
 
-            btnMoveCar = requireView().findViewById(R.id.moveCar);
+            btnMoveCar = requireView().findViewById(R.id.btnMoveCar);
             btnMoveCar.setOnClickListener(v -> {
                 longitudePositionCar = 1.958275;
                 latitudePositionCar = 48.799861;
@@ -208,7 +214,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 //chooseMapStyle(tcuConnected,posCar, Integer.toString(R.string.idcar1));
             });
 
-            btnCrash = requireView().findViewById(R.id.crash);
+            btnCrash = requireView().findViewById(R.id.btnCrash);
             btnCrash.setOnClickListener(v ->
             {
                 if(typeToast >= 2) typeToast = 0;
@@ -603,6 +609,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         .withTextHaloColor("rgba(255, 255, 255, 100)")
                         .withTextHaloWidth(5.0f)
                         .withTextAnchor("top")
+                        .withIconRotate(180F)
                         .withTextOffset(new Float[] {0f, 1.5f})
                         .setDraggable(false));
                 map.animateCamera(CameraUpdateFactory.newCameraPosition(
@@ -634,7 +641,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         Timber.d("markerDisplay: %s", symbols);
                         break;
                     case 2:
+                        Context context = getContext();
                         Bitmap other = BitmapFactory.decodeResource(getResources(), R.drawable.yellow_car);
+
+                        List<MarkerOptions> markers = new ArrayList<>();
+
+                        Icon blue = IconFactory.getInstance(context).fromResource(R.drawable.blue_car);
+
+
+                        //Icon red = IconFactory.getInstance(context).fromDrawable(ContextCompat.getDrawable(getContext(),R.drawable.red_car));
+
+                        for (int i = 0; i < 2; i++){
+                            markers.add(new MarkerOptions()
+                                    .position(posCar)
+                                    .title("blalba")
+                                    .snippet("blabla too")
+                                    .icon(blue)
+                            );
+                        }
+
+                        map.addMarkers(markers);
+
                         Objects.requireNonNull(map.getStyle()).addImage(isMarkerString, other);
                         if (idMarkerOtherList.contains(idMarker)) {
                             originIcon.setLatLng(positionMarker);
