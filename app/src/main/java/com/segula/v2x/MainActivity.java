@@ -1,10 +1,18 @@
 package com.segula.v2x;
 
+import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ResourceCursorAdapter;
+import android.widget.Switch;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -17,11 +25,38 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.segula.v2x.databinding.ActivityMainBinding;
+import com.segula.v2x.utils.GlobalConstants;
+import com.segula.v2x.utils.Utils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.nio.ByteOrder;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import timber.log.Timber;
+import fr.segula.tcp.TCP;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
+    private String ipAddress;
+    public TCP tcpClient;
+    Button btnStatusConnected;
+    private GlobalConstants.Language language;
+    private int alive = 0;
+    private boolean network_receive = false;
+    private Resources res;
+    private Switch switchLanguage;
+    private int languageState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        res = getResources();
 
         setSupportActionBar(binding.appBarMain.toolbar);
         DrawerLayout drawer = binding.drawerLayout;
@@ -41,6 +77,11 @@ public class MainActivity extends AppCompatActivity {
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
                 .setOpenableLayout(drawer)
                 .build();
+
+        btnStatusConnected = findViewById(R.id.btnStatusConnected);
+        ipAddress = getWifiIpAddress(this);
+        tcpClient = new TCP(true, TCP.ReadDataType.DATA_JSON_PACKET_IN_BYTES);
+        //connect();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
@@ -58,5 +99,195 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    private static String getWifiIpAddress(Context context) {
+
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        int ipAddress = 0;
+        if (wifiManager != null) {
+            //ipAddress = wifiManager.getConnectionInfo().getIpAddress();
+            ipAddress = wifiManager.getDhcpInfo().ipAddress;
+        }
+
+        // Convert little-endian to big-endian if needed
+        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
+            ipAddress = Integer.reverseBytes(ipAddress);
+        }
+
+        byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
+
+        String ipAddressString;
+        try {
+            ipAddressString = InetAddress.getByAddress(ipByteArray).getHostAddress();
+            ipAddressString = ipAddressString.substring(0, ipAddressString.lastIndexOf(".") + 1) + "1";
+        } catch (UnknownHostException ex) {
+            Log.e(TAG, "Unable to get host address.");
+            ipAddressString = "";
+        }
+
+        Log.d(TAG, "getWifiIpAddress:  " + ipAddressString);
+        return ipAddressString;
+    }
+
+    private synchronized void updateTcpUi() {
+        if (tcpClient != null) {
+            final TCP.ConnectionStatus tcpState = tcpClient.getConnectionStatus();
+
+            Utils.runOnUi(new Runnable() {
+                @Override
+                public void run() {
+                    if (tcpState == TCP.ConnectionStatus.CONNECTED) {
+                        btnStatusConnected.setBackgroundResource(R.color.color5);
+                        //enableButtonSurvey();
+                    } else if ((tcpState == TCP.ConnectionStatus.DISCONNECTED) || (tcpState == TCP.ConnectionStatus.CONNECTION_ERROR)) {
+                        btnStatusConnected.setBackgroundResource(R.color.red);
+                        //disableButtonSurvey();
+                    } else if (tcpState == TCP.ConnectionStatus.CONNECTING) {
+                        btnStatusConnected.setBackgroundResource(R.color.color1);
+                    }
+                }
+            });
+        }
+    }
+
+    synchronized private void connect() {
+        Log.d(TAG, "connect: ");
+        if (tcpClient != null) {
+            tcpClient.disconnect();
+            tcpClient.registerConnectionStatusListener(new TcpStatusListener());
+            tcpClient.registerReadyReadListener(new ReadOnTcpListener());
+            tcpClient.connect(ipAddress,
+                    res.getInteger(R.integer.tcp_port));
+        }
+    }
+
+    private class TcpStatusListener implements TCP.ConnectionStatusListener {
+        @Override
+        public void onConnectionChanged(final TCP.ConnectionStatus status) {
+            Timber.d("status %s",status.getString());
+            //storeTCPStateInSharedPreference();
+            if (status == TCP.ConnectionStatus.DISCONNECTED) {
+            }
+            if (status == TCP.ConnectionStatus.CONNECTED) {
+                alive = 0;
+                new Timer().scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (!network_receive) {
+                            alive++;
+                            Log.d(TAG, "run: alive ++ " + alive);
+                        } else {
+                            alive = 0;
+                        }
+                        if (alive == 5) {
+                            Log.d(TAG, "run: alive 10 " + alive);
+                            connect();
+                            cancel();
+                        }
+                        network_receive = false;
+                    }
+                }, 0, 2000);
+            }
+            updateTcpUi();
+        }
+    }
+
+    private class ReadOnTcpListener implements TCP.ReadyReadListener {
+
+        @Override
+        public void onReadyRead(byte[] bytes, Socket socket) {
+            String tcpDataReceived = new String(bytes);
+
+            if (!tcpDataReceived.contains("network")) {
+                processTCPData(bytes);
+            } else if (tcpDataReceived.contains("network")) {
+                //Log.v("timer", "network true " + network_receive);
+                network_receive = true;
+            }
+        }
+    }
+
+    private void processTCPData(byte[] bytes) {
+        JSONObject json;
+        //currentSegment = null;
+        //currentSubSegment = null;
+
+        try {
+            json = new JSONObject(new String(bytes));
+
+            if (json.length() != 0) {
+//                if (json.has(GlobalConstants.SEGMENT_POSITION)) {
+//                    //processInitialPosition(json);
+//                    //commonData.setCurrentPosition(getCurrentPosition());
+//                } else if (json.has(GlobalConstants.SEGMENT_OPERATOR)) {
+//                    //processSurveyTypeJSON(json);
+//                } else {
+//                    //do nothing!
+//                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateResources(Context context, String language) {
+        Resources res = context.getResources();
+
+        Configuration configuration;
+        configuration = new Configuration(res.getConfiguration());
+
+        configuration.setLocale(new Locale(language));
+
+        res.updateConfiguration(configuration, res.getDisplayMetrics());
+    }
+
+
+
+    private void setCurrentLanguageFromLanguageOptions(int pos) {
+
+
+        switch (pos) {
+            case 0:
+                language = GlobalConstants.Language.ENGLISH;
+                updateResources(getBaseContext(), "en");
+
+                break;
+
+            case 1:
+                language = GlobalConstants.Language.FRENCH;
+                updateResources(getBaseContext(), "fr");
+
+                break;
+
+//            case 2:
+//                language = GlobalConstants.Language.ESPAGNOL;
+//                updateResources(getBaseContext(), "es");
+//
+//                break;
+//
+//            case 3:
+//                language = GlobalConstants.Language.ALLEMAND;
+//                updateResources(getBaseContext(), "de");
+//
+//                break;
+//
+//            case 4:
+//                language = GlobalConstants.Language.CHINOIS;
+//                updateResources(getBaseContext(), "zh");
+//
+//                break;
+//
+//            case 5:
+//                language = GlobalConstants.Language.ITALIEN;
+//                updateResources(getBaseContext(), "it");
+//
+//                break;
+
+            default:
+                break;
+        }
+        updateTcpUi();
+        //updateUILanguage();
     }
 }
