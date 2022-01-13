@@ -99,6 +99,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     public Context context = getContext();
 
+    List<MarkerOptions> markers = new ArrayList<>();
+    List<MarkerOptions> markerTCUNOK = new ArrayList<>();
+    List<MarkerOptions> markerTCUConnected = new ArrayList<>();
+
     //private TCP tcpServer;
 
     private MapView mapView;
@@ -200,7 +204,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                 LatLng carOther = new LatLng(48.796768,1.978605);
                 LatLng carOther2 = new LatLng(48.798772218369194,1.9941396447244915);
-                markerDisplay(2,idMarkerOther,date, heure, carOther, puissance, ecu);
+                if(idMarkerOther == 9) markerDisplay(2,idMarkerOther,date, heure, carOther, puissance, ecu);
+
+                if(idMarkerOther == 10)  markerDisplay(2,idMarkerOther,date, heure, carOther2, puissance, ecu);
+
                 idMarkerOther++;
                 //OtherCar(carOther, carOther2, Integer.toString(R.string.idcar2));
             });
@@ -216,10 +223,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
             btnMoveCar = requireView().findViewById(R.id.btnMoveCar);
             btnMoveCar.setOnClickListener(v -> {
-                longitudePositionCar = 1.958275;
-                latitudePositionCar = 48.799861;
-                posCar = new LatLng(latitudePositionCar, longitudePositionCar);
-                markerDisplay(2,9,date, heure, posCar, puissance, ecu);
+                //longitudePositionCar = 1.958275;
+                //latitudePositionCar = 48.799861;
+                //posCar = new LatLng(latitudePositionCar, longitudePositionCar);
+                markerDisplay(2,idMarkerOther,date, heure, posCar, puissance, ecu);
+                longitudePositionCar = longitudePositionCar + 0.001;
+                latitudePositionCar = latitudePositionCar + 0.01;
                 //chooseMapStyle(tcuConnected,posCar, Integer.toString(R.string.idcar1));
             });
 
@@ -605,12 +614,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         String isMarkerString = Integer.toString(idMarker);
         switch (tcuConnected) {
             case 0:
-                List<MarkerOptions> markerTCUNOK = new ArrayList<>();
                 Icon red = IconFactory.getInstance(requireContext()).fromResource(R.drawable.red_car);
-                String carInfoNOK = "Date : " + date + ", \n" +
-                        "Heure : " + heure + ", \n" +
-                        "Position : " + isMarkerString + ", \n" +
-                        "Puissance : " + puissance + ", \n" +
+                String carInfoNOK = "Date : " + date + "\n" +
+                        "Heure : " + heure + "\n" +
+                        "Position : " + positionMarker + "\n" +
+                        "Puissance : " + puissance + "\n" +
                         "ECU : " + ecu;
 
                 markerTCUNOK.add(new MarkerOptions()
@@ -645,13 +653,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 //                        drawPolygonCircle(positionCar);
 //                        symbols.add(originIcon);
 //                        Timber.d("markerDisplay: %s", symbols);
-
-                        List<MarkerOptions> markerTCUConnected = new ArrayList<>();
+                        map.removeAnnotations();
                         Icon blue = IconFactory.getInstance(requireContext()).fromResource(R.drawable.blue_car);
-                        String carInfoOK = "Date : " + date + ", \n" +
-                                "Heure : " + heure + ", \n" +
-                                "Position : " + isMarkerString + ", \n" +
-                                "Puissance : " + puissance + ", \n" +
+                        String carInfoOK = "Date : " + date + "\n" +
+                                "Heure : " + heure + "\n" +
+                                "Position : " + positionMarker + "\n" +
+                                "Puissance : " + puissance + "\n" +
                                 "ECU : " + ecu;
 
                         markerTCUConnected.add(new MarkerOptions()
@@ -669,12 +676,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         map.addMarkers(markerTCUConnected);
                         break;
                     case 2:
-                        List<MarkerOptions> markers = new ArrayList<>();
+
                         Icon yellow = IconFactory.getInstance(requireContext()).fromResource(R.drawable.yellow_car);
-                        String carInfoOther = "Date : " + date + ", \n" +
-                                "Heure : " + heure + ", \n" +
-                                "Position : " + isMarkerString + ", \n" +
-                                "Puissance : " + puissance + ", \n" +
+                        String carInfoOther = "Date : " + date + "\n" +
+                                "Heure : " + heure + "\n" +
+                                "Position : " + positionMarker + "\n" +
+                                "Puissance : " + puissance + "\n" +
                                 "ECU : " + ecu;
 
                                 markers.add(new MarkerOptions()
