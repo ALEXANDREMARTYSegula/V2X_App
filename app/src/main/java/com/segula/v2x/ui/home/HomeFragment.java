@@ -36,6 +36,7 @@ import com.mapbox.geojson.Polygon;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
+import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -91,6 +92,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private int distanceCrash = 0;
     private int distanceInfo = 0;
     private int typeToast = 0;
+    int idMarkerOther = 9;
+    private String date = "13/01/2021";
+    private String heure = "17:00";
+    private int puissance = 0, ecu = 0;
+
+    public Context context = getContext();
 
     //private TCP tcpServer;
 
@@ -139,7 +146,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         ), style -> {
                         this.map = mapboxMap;
                         symbolManager = new SymbolManager(mapView, map, style);
-                        markerDisplay(1,1,posCar);
+                        markerDisplay(1,1, date, heure, posCar, puissance, ecu);
 //                        chooseMapStyle(tcuConnected, posCar, Integer.toString(R.string.idcar1));
                         symbolManager.addClickListener(new OnSymbolClickListener() {
                             @Override
@@ -182,7 +189,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 stellantisId ++;
                 LatLng carStellantis = new LatLng(48.80043011689067,1.978732392194232);
                 LatLng carStellantis2 = new LatLng(48.798734,2.000806);
-                markerDisplay(3,5,carStellantis);
+                markerDisplay(3,5, date, heure, carStellantis, puissance, ecu);
 //                if(stellantisId == 1) StellantisCar(carStellantis, stellantisId);
 //                if(stellantisId == 2) StellantisCar(carStellantis2, stellantisId);
 
@@ -190,9 +197,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
             btnOther = requireView().findViewById(R.id.btnOther);
             btnOther.setOnClickListener(v -> {
+
                 LatLng carOther = new LatLng(48.796768,1.978605);
                 LatLng carOther2 = new LatLng(48.798772218369194,1.9941396447244915);
-                markerDisplay(2,9,carOther);
+                markerDisplay(2,idMarkerOther,date, heure, carOther, puissance, ecu);
+                idMarkerOther++;
                 //OtherCar(carOther, carOther2, Integer.toString(R.string.idcar2));
             });
 
@@ -201,7 +210,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 tcuConnected = 1;
                 //btnWaiting.setVisibility(View.GONE);
                 LatLng carStellantis2 = new LatLng(48.798734,2.000806);
-                markerDisplay(1,1,carStellantis2);
+                markerDisplay(1,1,date, heure, carStellantis2, puissance, ecu);
                 //chooseMapStyle(tcuConnected,posCar, Integer.toString(R.string.idcar1));
             });
 
@@ -210,7 +219,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 longitudePositionCar = 1.958275;
                 latitudePositionCar = 48.799861;
                 posCar = new LatLng(latitudePositionCar, longitudePositionCar);
-                markerDisplay(2,9,posCar);
+                markerDisplay(2,9,date, heure, posCar, puissance, ecu);
                 //chooseMapStyle(tcuConnected,posCar, Integer.toString(R.string.idcar1));
             });
 
@@ -590,135 +599,139 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public void recupDonnee(){
 
 
-
-
     }
 
-    public void markerDisplay(int typeMarker, int idMarker, LatLng positionMarker){
+    public void markerDisplay(int typeMarker, int idMarker, String date, String heure, LatLng positionMarker, int puissance, int ecu) {
         String isMarkerString = Integer.toString(idMarker);
-        switch (tcuConnected){
+        switch (tcuConnected) {
             case 0:
-                Bitmap redCar = BitmapFactory.decodeResource(getResources(), R.drawable.red_car);
-                Objects.requireNonNull(map.getStyle()).addImage(isMarkerString,redCar);
-                originIcon = symbolManager.create(new SymbolOptions()
-                        .withLatLng(positionMarker)
-                        .withIconImage(isMarkerString)
-                        .withIconSize(1f)
-                        .withIconOffset(new Float[] {0f,-1.5f})
-                        .withZIndex(10)
-                        .withTextHaloColor("rgba(255, 255, 255, 100)")
-                        .withTextHaloWidth(5.0f)
-                        .withTextAnchor("top")
-                        .withIconRotate(180F)
-                        .withTextOffset(new Float[] {0f, 1.5f})
-                        .setDraggable(false));
+                List<MarkerOptions> markerTCUNOK = new ArrayList<>();
+                Icon red = IconFactory.getInstance(requireContext()).fromResource(R.drawable.red_car);
+                String carInfoNOK = "Date : " + date + ", \n" +
+                        "Heure : " + heure + ", \n" +
+                        "Position : " + isMarkerString + ", \n" +
+                        "Puissance : " + puissance + ", \n" +
+                        "ECU : " + ecu;
+
+                markerTCUNOK.add(new MarkerOptions()
+                        .position(positionMarker)
+                        .title("ID : " + idMarker)
+                        .snippet(carInfoNOK)
+                        .icon(red)
+                );
                 map.animateCamera(CameraUpdateFactory.newCameraPosition(
                         new CameraPosition.Builder()
-                                .target(posCar)
+                                .target(positionMarker)
                                 .zoom(13.6)
                                 .build()
                 ));
-                symbols.add(originIcon);
-                Timber.d("markerDisplay: %s", symbols);
+                map.addMarkers(markerTCUNOK);
                 break;
 
             case 1:
                 switch (typeMarker) {
                     case 1:
-                        Bitmap blueCar = BitmapFactory.decodeResource(getResources(), R.drawable.blue_car);
-                        Objects.requireNonNull(map.getStyle()).addImage(isMarkerString, blueCar);
+//                        Bitmap blueCar = BitmapFactory.decodeResource(getResources(), R.drawable.blue_car);
+//                        Objects.requireNonNull(map.getStyle()).addImage(isMarkerString, blueCar);
+//                        map.animateCamera(CameraUpdateFactory.newCameraPosition(
+//                                new CameraPosition.Builder()
+//                                        .target(positionMarker)
+//                                        .zoom(13.6)
+//                                        .build()
+//                        ));
+//                        originIcon.setLatLng(positionMarker);
+//                        originIcon.setIconImage(isMarkerString);
+//                        symbolManager.update(originIcon);
+//                        drawPolygonCircle(positionCar);
+//                        symbols.add(originIcon);
+//                        Timber.d("markerDisplay: %s", symbols);
+
+                        List<MarkerOptions> markerTCUConnected = new ArrayList<>();
+                        Icon blue = IconFactory.getInstance(requireContext()).fromResource(R.drawable.blue_car);
+                        String carInfoOK = "Date : " + date + ", \n" +
+                                "Heure : " + heure + ", \n" +
+                                "Position : " + isMarkerString + ", \n" +
+                                "Puissance : " + puissance + ", \n" +
+                                "ECU : " + ecu;
+
+                        markerTCUConnected.add(new MarkerOptions()
+                                    .position(positionMarker)
+                                    .title("ID : " + idMarker)
+                                    .snippet(carInfoOK)
+                                    .icon(blue)
+                        );
                         map.animateCamera(CameraUpdateFactory.newCameraPosition(
                                 new CameraPosition.Builder()
                                         .target(positionMarker)
                                         .zoom(13.6)
                                         .build()
                         ));
-                        originIcon.setLatLng(positionMarker);
-                        originIcon.setIconImage(isMarkerString);
-                        symbolManager.update(originIcon);
-                        drawPolygonCircle(positionCar);
-                        symbols.add(originIcon);
-                        Timber.d("markerDisplay: %s", symbols);
+                        map.addMarkers(markerTCUConnected);
                         break;
                     case 2:
-                        Context context = getContext();
-                        Bitmap other = BitmapFactory.decodeResource(getResources(), R.drawable.yellow_car);
-
                         List<MarkerOptions> markers = new ArrayList<>();
+                        Icon yellow = IconFactory.getInstance(requireContext()).fromResource(R.drawable.yellow_car);
+                        String carInfoOther = "Date : " + date + ", \n" +
+                                "Heure : " + heure + ", \n" +
+                                "Position : " + isMarkerString + ", \n" +
+                                "Puissance : " + puissance + ", \n" +
+                                "ECU : " + ecu;
 
-                        Icon blue = IconFactory.getInstance(context).fromResource(R.drawable.blue_car);
-
-
-                        //Icon red = IconFactory.getInstance(context).fromDrawable(ContextCompat.getDrawable(getContext(),R.drawable.red_car));
-
-                        for (int i = 0; i < 2; i++){
-                            markers.add(new MarkerOptions()
-                                    .position(posCar)
-                                    .title("blalba")
-                                    .snippet("blabla too")
-                                    .icon(blue)
+                                markers.add(new MarkerOptions()
+                                    .position(positionMarker)
+                                    .title("ID : " + idMarker)
+                                    .snippet(carInfoOther)
+                                    .icon(yellow)
                             );
-                        }
 
+//                        if (idMarker == 9) {
+//                            markers.add(new MarkerOptions()
+//                                    .position(positionMarker)
+//                                    .title("ID : " + idMarker)
+//                                    .snippet(all)
+//                                    .icon(yellow)
+//                            );
+//                        }
+//                        if (idMarker == 10) {
+//                            markers.add(new MarkerOptions()
+//                                    .position(posCar)
+//                                    .title("ID : " + idMarker)
+//                                    .snippet("Date : " + date)
+//                                    .snippet("Heure : " + heure)
+//                                    .icon(yellow)
+//                            );
+//                        }
                         map.addMarkers(markers);
-
-                        Objects.requireNonNull(map.getStyle()).addImage(isMarkerString, other);
-                        if (idMarkerOtherList.contains(idMarker)) {
-                            originIcon.setLatLng(positionMarker);
-                            originIcon.setIconImage(isMarkerString);
-                            symbolManager.update(originIcon);
-                            drawPolygonCircle(positionCar);
-
-                        } else {
-                            options.add(new SymbolOptions()
-                                    .withLatLng(positionMarker)
-                                    .withIconImage(isMarkerString)
-                                    .withIconSize(1f)
-                                    .withIconOffset(new Float[]{0f, -1.5f})
-                                    .withZIndex(10)
-                                    .withTextHaloColor("rgba(255, 255, 255, 100)")
-                                    .withTextHaloWidth(5.0f)
-                                    .withTextAnchor("top")
-                                    .withTextOffset(new Float[]{0f, 1.5f})
-                                    .setDraggable(false)
-                            );
-                            symbols = symbolManager.create(options);
-                            symbols.add(originIcon);
-                            Timber.d("markerDisplay: %s", symbols);
-                            idMarkerOtherList.add(idMarker);
-                            Timber.d("IDMarkerOther : %s", idMarkerOtherList);
-                        }
-                        break;
-                    case 3:
-                        Bitmap stellantisCar = BitmapFactory.decodeResource(getResources(), R.drawable.green_car);
-                        Objects.requireNonNull(map.getStyle()).addImage(isMarkerString, stellantisCar);
-                        if (idMarkerStellantisList.contains(idMarker)) {
-                            originIcon.setLatLng(positionMarker);
-                            originIcon.setIconImage(isMarkerString);
-                            symbolManager.update(originIcon);
-                        } else {
-                            options.add(new SymbolOptions()
-                                    .withLatLng(positionMarker)
-                                    .withIconImage(isMarkerString)
-                                    .withIconSize(1f)
-                                    .withIconOffset(new Float[]{0f, -1.5f})
-                                    .withZIndex(10)
-                                    .withTextHaloColor("rgba(255, 255, 255, 100)")
-                                    .withTextHaloWidth(5.0f)
-                                    .withTextAnchor("top")
-                                    .withTextOffset(new Float[]{0f, 1.5f})
-                                    .setDraggable(false)
-                            );
-                            idMarkerStellantisList.add(idMarker);
-                        }
-                        Timber.d("IDMarkerStellantis : %s", idMarkerStellantisList);
+                        Timber.d("IDMarkerOther : %s", idMarkerOtherList);
                 }
+                break;
+            case 3:
+                Bitmap stellantisCar = BitmapFactory.decodeResource(getResources(), R.drawable.green_car);
+                Objects.requireNonNull(map.getStyle()).addImage(isMarkerString, stellantisCar);
+                if (idMarkerStellantisList.contains(idMarker)) {
+                    originIcon.setLatLng(positionMarker);
+                    originIcon.setIconImage(isMarkerString);
+                    symbolManager.update(originIcon);
+                } else {
+                    options.add(new SymbolOptions()
+                            .withLatLng(positionMarker)
+                            .withIconImage(isMarkerString)
+                            .withIconSize(1f)
+                            .withIconOffset(new Float[]{0f, -1.5f})
+                            .withZIndex(10)
+                            .withTextHaloColor("rgba(255, 255, 255, 100)")
+                            .withTextHaloWidth(5.0f)
+                            .withTextAnchor("top")
+                            .withTextOffset(new Float[]{0f, 1.5f})
+                            .setDraggable(false)
+                    );
+                    idMarkerStellantisList.add(idMarker);
+                }
+                Timber.d("IDMarkerStellantis : %s", idMarkerStellantisList);
                 break;
 
             default:
                 break;
-
         }
-
     }
 }
