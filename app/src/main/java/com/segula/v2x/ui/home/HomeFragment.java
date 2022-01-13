@@ -225,7 +225,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             btnMoveCar.setOnClickListener(v -> {
                 //longitudePositionCar = 1.958275;
                 //latitudePositionCar = 48.799861;
-                //posCar = new LatLng(latitudePositionCar, longitudePositionCar);
+                posCar = new LatLng(latitudePositionCar, longitudePositionCar);
                 markerDisplay(2,idMarkerOther,date, heure, posCar, puissance, ecu);
                 longitudePositionCar = longitudePositionCar + 0.001;
                 latitudePositionCar = latitudePositionCar + 0.01;
