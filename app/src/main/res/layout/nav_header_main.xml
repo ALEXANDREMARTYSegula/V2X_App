@@ -17,9 +17,11 @@
     <TextView
         android:id="@+id/tvENLanguage"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
+        android:gravity="center_vertical"
         android:text="@string/languageEN"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/switchLanguage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,10 +36,12 @@
     <TextView
         android:id="@+id/tvFRLanguage"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
         android:layout_marginEnd="8dp"
+        android:gravity="center_vertical"
         android:text="@string/languageFR"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/switchLanguage"
         app:layout_constraintEnd_toStartOf="@+id/switchLanguage"
         app:layout_constraintTop_toTopOf="parent" />
 
