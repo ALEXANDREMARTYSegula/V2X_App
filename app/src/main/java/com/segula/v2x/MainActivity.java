@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private String ipAddress;
     public TCP tcpClient;
     Button btnStatusConnected;
-    TextView tvStatusConnection;
+    TextView tvStatusConnection, tvFRLanguage, tvENLanguage;
     Switch switchLanguage;
     private GlobalConstants.Language language;
     private int alive = 0;
@@ -85,6 +85,10 @@ public class MainActivity extends AppCompatActivity {
         View headerImageView= navigationView.getHeaderView(0);
         btnStatusConnected = headerImageView.findViewById(R.id.btnStatusConnected);
         tvStatusConnection = headerImageView.findViewById(R.id.tvStatusConnection);
+        tvFRLanguage = headerImageView.findViewById(R.id.tvFRLanguage);
+        tvENLanguage = headerImageView.findViewById(R.id.tvENLanguage);
+        tvENLanguage.setTextSize(10);
+        tvFRLanguage.setTextSize(14);
         switchLanguage = headerImageView.findViewById(R.id.switchLanguage);
 
 
@@ -97,8 +101,16 @@ public class MainActivity extends AppCompatActivity {
         switchLanguage.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(switchLanguage.isChecked()) setCurrentLanguageFromLanguageOptions(1);
-                else setCurrentLanguageFromLanguageOptions(0);
+                if(switchLanguage.isChecked()) {
+                    setCurrentLanguageFromLanguageOptions(1);
+                    tvENLanguage.setTextSize(14);
+                    tvFRLanguage.setTextSize(10);
+                }
+                else {
+                    setCurrentLanguageFromLanguageOptions(0);
+                    tvENLanguage.setTextSize(10);
+                    tvFRLanguage.setTextSize(14);
+                }
             }
         });
     }
@@ -269,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
             case 0:
                 language = GlobalConstants.Language.FRENCH;
                 updateResources(getBaseContext(), "fr");
-                updateResources(homeFragment.requireContext(), "fr");
+                //updateResources(homeFragment.requireContext(), "fr");
 
                 break;
 
@@ -277,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
 
                 language = GlobalConstants.Language.ENGLISH;
                 updateResources(getBaseContext(), "en");
-                updateResources(homeFragment.requireContext(), "en");
+                //updateResources(homeFragment.requireContext(), "en");
 
                 break;
 
