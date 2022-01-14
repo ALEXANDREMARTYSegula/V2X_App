@@ -7,6 +7,7 @@
     android:background="@color/colorstellantis"
     android:gravity="bottom"
     android:orientation="vertical"
+    android:id="@+id/nav_header_main"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -23,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Switch
-        android:id="@+id/switch1"
+        android:id="@+id/switchLanguage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -37,7 +38,7 @@
         android:layout_marginEnd="8dp"
         android:text="@string/languageFR"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/switch1"
+        app:layout_constraintEnd_toStartOf="@+id/switchLanguage"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -53,14 +54,37 @@
 
     <Button
         android:id="@+id/btnStatusConnected"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/standard_45"
-        android:layout_marginTop="@dimen/standard_80"
-        android:layout_marginEnd="16dp"
+        style="@android:style/Widget.Button"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="16dp"
         android:clickable="false"
+        app:cornerRadius="28dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvStatusConnection"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/tvStatusConnection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/switch1" />
+        app:layout_constraintStart_toEndOf="@+id/imageView" />
+
+    <!--    <Button-->
+<!--        android:id="@+id/btnStatusConnected"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginStart="@dimen/standard_45"-->
+<!--        android:layout_marginTop="@dimen/standard_80"-->
+<!--        android:layout_marginEnd="16dp"-->
+<!--        android:clickable="false"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/imageView"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/switch1" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

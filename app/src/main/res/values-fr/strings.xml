@@ -34,5 +34,8 @@
     <string name="Position">Position : </string>
     <string name="Puissance">Puissance : </string>
     <string name="ECU">ECU : </string>
+    <string name="connected">TCP Connecté</string>
+    <string name="disconnected">TCP Déconnecté</string>
+    <string name="connecting">TCP Connexion</string>
 
 </resources>

@@ -40,7 +40,7 @@ public class SplashScreen extends Activity {
         App_Name = findViewById(R.id.txtnameapp);
         logoStellantis = findViewById(R.id.logoStellantis);
 
-        Version_Name.setText("V " + version);
+        Version_Name.setText(version);
         App_Name.setText(appname);
         Progresswaiting();
     }

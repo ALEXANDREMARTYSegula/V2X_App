@@ -11,8 +11,11 @@ import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ResourceCursorAdapter;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -25,6 +28,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.segula.v2x.databinding.ActivityMainBinding;
+import com.segula.v2x.databinding.NavHeaderMainBinding;
+import com.segula.v2x.ui.home.HomeFragment;
 import com.segula.v2x.utils.GlobalConstants;
 import com.segula.v2x.utils.Utils;
 
@@ -48,14 +53,16 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
+    private HomeFragment homeFragment;
     private String ipAddress;
     public TCP tcpClient;
     Button btnStatusConnected;
+    TextView tvStatusConnection;
+    Switch switchLanguage;
     private GlobalConstants.Language language;
     private int alive = 0;
     private boolean network_receive = false;
     private Resources res;
-    private Switch switchLanguage;
     private int languageState;
 
     @Override
@@ -71,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(binding.appBarMain.toolbar);
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -78,13 +86,25 @@ public class MainActivity extends AppCompatActivity {
                 .setOpenableLayout(drawer)
                 .build();
 
-        btnStatusConnected = findViewById(R.id.btnStatusConnected);
+        View headerImageView= navigationView.getHeaderView(0);
+        btnStatusConnected = headerImageView.findViewById(R.id.btnStatusConnected);
+        tvStatusConnection = headerImageView.findViewById(R.id.tvStatusConnection);
+        switchLanguage = headerImageView.findViewById(R.id.switchLanguage);
+
+
         ipAddress = getWifiIpAddress(this);
         tcpClient = new TCP(true, TCP.ReadDataType.DATA_JSON_PACKET_IN_BYTES);
-        //connect();
+        connect();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        switchLanguage.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(switchLanguage.isChecked()) setCurrentLanguageFromLanguageOptions(1);
+                else setCurrentLanguageFromLanguageOptions(0);
+            }
+        });
     }
 
     @Override
@@ -138,13 +158,16 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     if (tcpState == TCP.ConnectionStatus.CONNECTED) {
-                        btnStatusConnected.setBackgroundResource(R.color.color5);
+                        tvStatusConnection.setText(R.string.connected);
+                        btnStatusConnected.setBackgroundResource(R.drawable.connected);
                         //enableButtonSurvey();
                     } else if ((tcpState == TCP.ConnectionStatus.DISCONNECTED) || (tcpState == TCP.ConnectionStatus.CONNECTION_ERROR)) {
-                        btnStatusConnected.setBackgroundResource(R.color.red);
+                        tvStatusConnection.setText(R.string.disconnected);
+                        btnStatusConnected.setBackgroundResource(R.drawable.disconnected);
                         //disableButtonSurvey();
                     } else if (tcpState == TCP.ConnectionStatus.CONNECTING) {
-                        btnStatusConnected.setBackgroundResource(R.color.color1);
+                        tvStatusConnection.setText(R.string.connecting);
+                        btnStatusConnected.setBackgroundResource(R.drawable.connecting);
                     }
                 }
             });
@@ -246,17 +269,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void setCurrentLanguageFromLanguageOptions(int pos) {
 
-
         switch (pos) {
             case 0:
-                language = GlobalConstants.Language.ENGLISH;
-                updateResources(getBaseContext(), "en");
+                language = GlobalConstants.Language.FRENCH;
+                updateResources(getBaseContext(), "fr");
+                updateResources(homeFragment.requireContext(), "fr");
 
                 break;
 
             case 1:
-                language = GlobalConstants.Language.FRENCH;
-                updateResources(getBaseContext(), "fr");
+
+                language = GlobalConstants.Language.ENGLISH;
+                updateResources(getBaseContext(), "en");
+                updateResources(homeFragment.requireContext(), "en");
 
                 break;
 

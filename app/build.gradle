@@ -2,6 +2,9 @@ plugins {
     id 'com.android.application'
 }
 
+def VERSION_CODE = 2
+def VERSION_NAME = "1.2."
+
 android {
     compileSdk 31
 
@@ -9,8 +12,8 @@ android {
         applicationId "com.segula.v2x"
         minSdk 26
         targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        versionCode VERSION_CODE
+        versionName "v" + VERSION_NAME + VERSION_CODE
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
