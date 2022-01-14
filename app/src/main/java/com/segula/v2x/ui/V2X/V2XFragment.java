@@ -81,7 +81,7 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
     //Lat & Long
     private double latitudePositionCar = Utils.lastLocationLatitude;
     private double longitudePositionCar =  Utils.lastLocationLongitude;
-    private final Point positionCar = Point.fromLngLat(longitudePositionCar, latitudePositionCar);
+    private Point positionCar = Point.fromLngLat(longitudePositionCar, latitudePositionCar);
     private LatLng posCar = new LatLng(latitudePositionCar, longitudePositionCar);
 
     //Turf
@@ -426,6 +426,8 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                                             .build()
                             ));
                             map.addMarkers(markerTCUConnected);
+                            positionCar = Point.fromLngLat(positionMarker.getLongitude(), positionMarker.getLatitude());
+                            drawPolygonCircle(positionCar);
                         }
                         else{
                             markerTCUConnected.clear();
@@ -451,6 +453,8 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                                             .build()
                             ));
                             map.addMarkers(markerTCUConnected);
+                            positionCar = Point.fromLngLat(positionMarker.getLongitude(), positionMarker.getLatitude());
+                            drawPolygonCircle(positionCar);
                         }
 
                         break;
