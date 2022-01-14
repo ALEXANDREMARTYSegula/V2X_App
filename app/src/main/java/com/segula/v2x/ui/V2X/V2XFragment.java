@@ -13,11 +13,8 @@ import com.mapbox.geojson.Point;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -28,9 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -38,7 +32,6 @@ import com.mapbox.geojson.Polygon;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
-import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -48,10 +41,6 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.plugins.annotation.OnSymbolClickListener;
-import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.style.layers.FillLayer;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
@@ -64,8 +53,6 @@ import com.segula.v2x.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import timber.log.Timber;
 
 public class V2XFragment extends Fragment implements OnMapReadyCallback {
 
@@ -84,14 +71,8 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
     public final ArrayList<Integer> idMarkerStellantisList = new ArrayList<>();
 
     private int tcuConnected = 0, distanceCrash = 0, distanceInfo = 0, typeToast = 0, idMarkerOther = 9, puissance = 0, ecu = 0;
-    private final String date = "", heure = "";
     private static int stellantisId = 0;
     private static int otherId = 0;
-
-    public Context context = getContext();
-    public static Context context2;
-
-    //private TCP tcpServer;
 
     //Map
     private MapView mapView;
@@ -167,8 +148,6 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                 LatLng carStellantis = new LatLng(48.80043011689067,1.978732392194232);
                 LatLng carStellantis2 = new LatLng(48.798734,2.000806);
                 markerDisplay(3,5, carStellantis, puissance, ecu);
-//                if(stellantisId == 1) StellantisCar(carStellantis, stellantisId);
-//                if(stellantisId == 2) StellantisCar(carStellantis2, stellantisId);
 
             });
 
@@ -229,78 +208,6 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
 //        map= mapboxMap;
 //    }
 
-//    private void StellantisCar(LatLng point, int stellantisId){
-//        if(!idStellantis.contains(stellantisId)){
-//            idStellantis.add(stellantisId);
-//            Bitmap stellantis = BitmapFactory.decodeResource(getResources(), R.drawable.green_car);
-//            Objects.requireNonNull(map.getStyle()).addImage("stellantis",stellantis);
-//            options.add(new SymbolOptions()
-//                    .withLatLng(point)
-//                    .withIconImage("stellantis")
-//                    .withIconSize(1f)
-//                    .withIconOffset(new Float[] {0f,-1.5f})
-//                    .withZIndex(10)
-//                    .withTextHaloColor("rgba(255, 255, 255, 100)")
-//                    .withTextHaloWidth(5.0f)
-//                    .withTextAnchor("top")
-//                    .withTextOffset(new Float[] {0f, 1.5f})
-//                    .setDraggable(false)
-//            );
-//            symbols = symbolManager.create(options);
-//        }
-//        if(idStellantis.contains(stellantisId)){
-//            options.add(new SymbolOptions()
-//                    .withLatLng(point)
-//                    .withIconImage("stellantis")
-//                    .withIconSize(1f)
-//                    .withIconOffset(new Float[] {0f,-1.5f})
-//                    .withZIndex(10)
-//                    .withTextHaloColor("rgba(255, 255, 255, 100)")
-//                    .withTextHaloWidth(5.0f)
-//                    .withTextAnchor("top")
-//                    .withTextOffset(new Float[] {0f, 1.5f})
-//                    .setDraggable(false)
-//            );
-//        }
-//    }
-
-//    private void OtherCar(LatLng point, LatLng point2, String idCar){
-//        Bitmap other1 = BitmapFactory.decodeResource(getResources(), R.drawable.yellow_car);
-//        Objects.requireNonNull(map.getStyle()).addImage(idCar, other1);
-//        switch (otherId){
-//            case 0:
-//                originIcon = symbolManager.create(new SymbolOptions()
-//                        .withLatLng(point)
-//                        .withIconImage(idCar)
-//                        .withIconSize(1f)
-//                        .withIconOffset(new Float[] {0f,-1.5f})
-//                        .withZIndex(10)
-//                        .withTextHaloColor("rgba(255, 255, 255, 100)")
-//                        .withTextHaloWidth(5.0f)
-//                        .withTextAnchor("top")
-//                        .withTextOffset(new Float[] {0f, 1.5f})
-//                        .setDraggable(false));
-//                break;
-//            case 1:
-//                originIcon = symbolManager.create(new SymbolOptions()
-//                        .withLatLng(point2)
-//                        .withIconImage(idCar)
-//                        .withIconSize(1f)
-//                        .withIconOffset(new Float[] {0f,-1.5f})
-//                        .withZIndex(10)
-//                        .withTextHaloColor("rgba(255, 255, 255, 100)")
-//                        .withTextHaloWidth(5.0f)
-//                        .withTextAnchor("top")
-//                        .withTextOffset(new Float[] {0f, 1.5f})
-//                        .setDraggable(false));
-//                break;
-//            case 2:
-//                otherId = 0;
-//                break;
-//        }
-//        otherId++;
-//    }
-
     private void showTypeToast(int typeToast, String id){
         LayoutInflater inflater1 = requireActivity().getLayoutInflater();
         View layout = inflater1.inflate(R.layout.toast, requireView().findViewById(R.id.toast_container));
@@ -356,37 +263,6 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-//    private void MoveCar(LatLng posCar){
-//        /**
-//         * On recupere les données du tcu, on appelle updateNewLocation() pour mettre à jour la position de la voiture, et ensuite on bouge
-//         */
-//        //updateNewLocation();
-//        //chooseMapStyle(tcuConnected);
-//        Bitmap blueCar = BitmapFactory.decodeResource(getResources(), R.drawable.blue_car);
-//        Objects.requireNonNull(map.getStyle()).addImage("Car",blueCar);
-//        options.add(new SymbolOptions()
-//                .withLatLng(posCar)
-//                .withIconImage("Car")
-//                .withIconSize(1f)
-//                .withIconOffset(new Float[] {0f,-1.5f})
-//                .withZIndex(10)
-//                .withTextHaloColor("rgba(255, 255, 255, 100)")
-//                .withTextHaloWidth(5.0f)
-//                .withTextAnchor("top")
-//                .withTextOffset(new Float[] {0f, 1.5f})
-//                .setDraggable(false)
-//        );
-//        map.animateCamera(CameraUpdateFactory.newCameraPosition(
-//                new CameraPosition.Builder()
-//                        .target(posCar)
-//                        .zoom(13.6)
-//                        .build()
-//        ));
-//        symbols = symbolManager.create(options);
-//        //initPolygonCircleFillLayer();
-//        //drawPolygonCircle(positionCar);
-//    }
-
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         map = mapboxMap;
@@ -415,11 +291,6 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
     public void onStop() {
         super.onStop();
         mapView.onStop();
-    }
-
-    @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
     }
 
     @Override
@@ -484,84 +355,6 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
         super.onDestroy();
         mapView.onDestroy();
     }
-
-//    private void chooseMapStyle(int tcuConnected, LatLng posCar, String idCar){
-//        switch (tcuConnected){
-//            case 0:
-//                Bitmap redCar = BitmapFactory.decodeResource(getResources(), R.drawable.red_car);
-//                Objects.requireNonNull(map.getStyle()).addImage(idCar,redCar);
-//                originIcon = symbolManager.create(new SymbolOptions()
-//                        .withLatLng(posCar)
-//                        .withIconImage(idCar)
-//                        .withIconSize(1f)
-//                        .withIconOffset(new Float[] {0f,-1.5f})
-//                        .withZIndex(10)
-//                        .withTextHaloColor("rgba(255, 255, 255, 100)")
-//                        .withTextHaloWidth(5.0f)
-//                        .withTextAnchor("top")
-//                        .withTextOffset(new Float[] {0f, 1.5f})
-//                        .setDraggable(false));
-//                map.animateCamera(CameraUpdateFactory.newCameraPosition(
-//                        new CameraPosition.Builder()
-//                                .target(posCar)
-//                                .zoom(13.6)
-//                                .build()
-//                ));
-//                //fillLayerCounter = 0;
-//                initPolygonCircleFillLayer();
-//                drawPolygonCircle(positionCar);
-//                break;
-//            case 1:
-//                if(originIcon == null){
-//                    Bitmap blueCar = BitmapFactory.decodeResource(getResources(), R.drawable.blue_car);
-//                    Objects.requireNonNull(map.getStyle()).addImage(idCar,blueCar);
-//                    options.add(new SymbolOptions()
-//                            .withLatLng(posCar)
-//                            .withIconImage(idCar)
-//                            .withIconSize(1f)
-//                            .withIconOffset(new Float[] {0f,-1.5f})
-//                            .withZIndex(10)
-//                            .withTextHaloColor("rgba(255, 255, 255, 100)")
-//                            .withTextHaloWidth(5.0f)
-//                            .withTextAnchor("top")
-//                            .withTextOffset(new Float[] {0f, 1.5f})
-//                            .setDraggable(false)
-//                    );
-//                    map.animateCamera(CameraUpdateFactory.newCameraPosition(
-//                            new CameraPosition.Builder()
-//                                    .target(posCar)
-//                                    .zoom(13.6)
-//                                    .build()
-//                    ));
-////                    originIcon = symbolManager.create(new SymbolOptions()
-////                            .withLatLng(posCar)
-////                            .withIconImage("Car")
-////                            .withIconSize(1f)
-////                            .withIconOffset(new Float[] {0f,-1.5f})
-////                            .withZIndex(10)
-////                            .withTextHaloColor("rgba(255, 255, 255, 100)")
-////                            .withTextHaloWidth(5.0f)
-////                            .withTextAnchor("top")
-////                            .withTextOffset(new Float[] {0f, 1.5f})
-////                            .setDraggable(false));
-////                    symbols = symbolManager.create(options);
-//                    //fillLayerCounter = 0;
-//                    //initPolygonCircleFillLayer();
-//                    drawPolygonCircle(positionCar);
-//                }
-//                else{
-//                    Bitmap blueCar = BitmapFactory.decodeResource(getResources(), R.drawable.blue_car);
-//                    Objects.requireNonNull(map.getStyle()).addImage(idCar,blueCar);
-//                    originIcon.setLatLng(posCar);
-//                    originIcon.setIconImage(idCar);
-//                    symbolManager.update(originIcon);
-//                    //fillLayerCounter = 0;
-//                    //initPolygonCircleFillLayer();
-//                    drawPolygonCircle(positionCar);
-//                }
-//                break;
-//        }
-//    }
 
     @Override
     public void onDestroyView() {
