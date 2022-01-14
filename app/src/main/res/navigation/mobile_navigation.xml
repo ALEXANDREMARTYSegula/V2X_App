@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_v2x">
 
     <fragment
-        android:id="@+id/nav_home"
-        android:name="com.segula.v2x.ui.home.HomeFragment"
-        android:label="@string/menu_home"
+        android:id="@+id/nav_v2x"
+        android:name="com.segula.v2x.ui.V2X.V2XFragment"
+        android:label="@string/menu_v2x"
         tools:layout="@layout/fragment_home" />
 
     <fragment

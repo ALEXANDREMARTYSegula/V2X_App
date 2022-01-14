@@ -28,8 +28,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.segula.v2x.databinding.ActivityMainBinding;
-import com.segula.v2x.databinding.NavHeaderMainBinding;
-import com.segula.v2x.ui.home.HomeFragment;
+import com.segula.v2x.ui.V2X.V2XFragment;
 import com.segula.v2x.utils.GlobalConstants;
 import com.segula.v2x.utils.Utils;
 
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
-    private HomeFragment homeFragment;
+    private V2XFragment v2XFragment;
     private String ipAddress;
     public TCP tcpClient;
     Button btnStatusConnected;
@@ -82,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_v2x, R.id.nav_gallery, R.id.nav_slideshow)
                 .setOpenableLayout(drawer)
                 .build();
 

@@ -1,4 +1,4 @@
-package com.segula.v2x.ui.home;
+package com.segula.v2x.ui.V2X;
 
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillOpacity;
@@ -67,9 +67,9 @@ import java.util.List;
 import java.util.Objects;
 import timber.log.Timber;
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback {
+public class V2XFragment extends Fragment implements OnMapReadyCallback {
 
-    private HomeViewModel homeViewModel;
+    private V2XViewModel v2XViewModel;
     private FragmentHomeBinding binding;
 
     private FillLayer fillLayer;
@@ -118,8 +118,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        v2XViewModel =
+                new ViewModelProvider(this).get(V2XViewModel.class);
 
         Mapbox.getInstance(this.requireContext(), getString(R.string.access_token));
         binding = FragmentHomeBinding.inflate(inflater, container, false);
