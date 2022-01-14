@@ -1,5 +1,6 @@
 package com.segula.v2x.ui.V2X;
 
+import static android.content.ContentValues.TAG;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillOpacity;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
@@ -16,6 +17,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +34,7 @@ import com.mapbox.geojson.Polygon;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
+import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -41,6 +44,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.plugins.markerview.MarkerView;
 import com.mapbox.mapboxsdk.style.layers.FillLayer;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
@@ -62,7 +66,7 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
     private FillLayer fillLayer;
     private int fillLayerCounter = 0;
 
-    Button btnStellantis, btnOther, btnTCU, btnMoveCar, btnCrash;
+    Button btnStellantis, btnOther, btnTCU, btnMoveCar, btnCrash, btnMoveAutre;
     private int marqueur = 0;
 
     public final ArrayList<Integer> idStellantis = new ArrayList<>();
@@ -93,9 +97,9 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
 
     //Markers
     List<MarkerOptions> markerTCUNOK = new ArrayList<>();
-    List<MarkerOptions> markerTCUConnected = new ArrayList<>();
-    List<MarkerOptions> markersStellantis = new ArrayList<>();
-    List<MarkerOptions> markersOther = new ArrayList<>();
+    Marker markerTCUConnected;
+    Marker markersStellantis;
+    Marker markersOther;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -185,6 +189,15 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                 if(typeToast >= 2) typeToast = 0;
                 typeToast ++;
                 showTypeToast(typeToast, getString(R.string.idcar1));
+            });
+
+            btnMoveAutre = requireView().findViewById(R.id.btnMoveAutre);
+            btnMoveAutre.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    posCar = new LatLng(49.798772218369194,1.9941396447244915);
+                    markerDisplay(3,5, posCar, puissance, ecu);
+                }
             });
         });
 
@@ -404,7 +417,7 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
             case 1:
                 switch (typeMarker) {
                     case 1:
-                        if(markerTCUConnected.isEmpty()){
+                        if(markerTCUConnected == null){
                             map.removeAnnotations();
                             Icon blue = IconFactory.getInstance(requireContext()).fromResource(R.drawable.blue_car);
                             String carInfoOK = "Date : " + android.text.format.DateFormat.format("dd/MM/yyyy", new java.util.Date()) + "\n" +
@@ -413,83 +426,114 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                                     "Puissance : " + puissance + "\n" +
                                     "ECU : " + ecu;
 
-                            markerTCUConnected.add(new MarkerOptions()
+                            markerTCUConnected = map.addMarker(new MarkerOptions()
                                     .position(positionMarker)
                                     .title("ID : " + idMarker)
                                     .snippet(carInfoOK)
-                                    .icon(blue)
-                            );
+                                    .icon(blue));
+
                             map.animateCamera(CameraUpdateFactory.newCameraPosition(
                                     new CameraPosition.Builder()
                                             .target(positionMarker)
                                             .zoom(13.6)
                                             .build()
                             ));
-                            map.addMarkers(markerTCUConnected);
                             positionCar = Point.fromLngLat(positionMarker.getLongitude(), positionMarker.getLatitude());
                             drawPolygonCircle(positionCar);
                         }
                         else{
-                            markerTCUConnected.clear();
-                            map.removeAnnotations();
-                            //map.getMarkers().get(0).remove();
-                            Icon blue = IconFactory.getInstance(requireContext()).fromResource(R.drawable.blue_car);
                             String carInfoOK = "Date : " + android.text.format.DateFormat.format("dd/MM/yyyy", new java.util.Date()) + "\n" +
                                     "Heure : " + SimpleDateFormat.getTimeInstance().format(new java.util.Date()) + "\n" +
                                     "Position : " + positionMarker + "\n" +
                                     "Puissance : " + puissance + "\n" +
                                     "ECU : " + ecu;
 
-                            markerTCUConnected.add(new MarkerOptions()
-                                    .position(positionMarker)
-                                    .title("ID : " + idMarker)
-                                    .snippet(carInfoOK)
-                                    .icon(blue)
-                            );
+                            markerTCUConnected.setPosition(positionMarker);
+                            markerTCUConnected.setSnippet(carInfoOK);
                             map.animateCamera(CameraUpdateFactory.newCameraPosition(
                                     new CameraPosition.Builder()
                                             .target(positionMarker)
                                             .zoom(13.6)
                                             .build()
                             ));
-                            map.addMarkers(markerTCUConnected);
                             positionCar = Point.fromLngLat(positionMarker.getLongitude(), positionMarker.getLatitude());
                             drawPolygonCircle(positionCar);
                         }
 
                         break;
                     case 2:
-                        Icon yellow = IconFactory.getInstance(requireContext()).fromResource(R.drawable.yellow_car);
-                        String carInfoOther = "Date : " + android.text.format.DateFormat.format("dd/MM/yyyy", new java.util.Date()) + "\n" +
-                                "Heure : " + SimpleDateFormat.getTimeInstance().format(new java.util.Date()) + "\n" +
-                                "Position : " + positionMarker + "\n" +
-                                "Puissance : " + puissance + "\n" +
-                                "ECU : " + ecu;
+                        if(idMarkerOtherList.contains(idMarker)){
+                            String carInfoOther = "Date : " + android.text.format.DateFormat.format("dd/MM/yyyy", new java.util.Date()) + "\n" +
+                                    "Heure : " + SimpleDateFormat.getTimeInstance().format(new java.util.Date()) + "\n" +
+                                    "Position : " + positionMarker + "\n" +
+                                    "Puissance : " + puissance + "\n" +
+                                    "ECU : " + ecu;
+                            markersOther.setPosition(positionMarker);
+                            markersOther.setSnippet(carInfoOther);
+                        }
+                        else{
+                            Icon yellow = IconFactory.getInstance(requireContext()).fromResource(R.drawable.yellow_car);
+                            String carInfoOther = "Date : " + android.text.format.DateFormat.format("dd/MM/yyyy", new java.util.Date()) + "\n" +
+                                    "Heure : " + SimpleDateFormat.getTimeInstance().format(new java.util.Date()) + "\n" +
+                                    "Position : " + positionMarker + "\n" +
+                                    "Puissance : " + puissance + "\n" +
+                                    "ECU : " + ecu;
 
-                                markersOther.add(new MarkerOptions()
+                            markersOther = map.addMarker(new MarkerOptions()
                                     .position(positionMarker)
                                     .title("ID : " + idMarker)
                                     .snippet(carInfoOther)
-                                    .icon(yellow)
-                            );
-                        map.addMarkers(markersOther);
+                                    .icon(yellow));
+
+                            idMarkerOtherList.add(idMarker);
+                            map.getMarkers();
+                        }
+
                         break;
                     case 3:
-                        Icon green = IconFactory.getInstance(requireContext()).fromResource(R.drawable.green_car);
-                        String carInfoStellantis = "Date : " + android.text.format.DateFormat.format("dd/MM/yyyy", new java.util.Date()) + "\n" +
-                                "Heure : " + SimpleDateFormat.getTimeInstance().format(new java.util.Date()) + "\n" +
-                                "Position : " + positionMarker + "\n" +
-                                "Puissance : " + puissance + "\n" +
-                                "ECU : " + ecu;
+                        if(idMarkerStellantisList.contains(idMarker)){
+                            String carInfoStellantis = "Date : " + android.text.format.DateFormat.format("dd/MM/yyyy", new java.util.Date()) + "\n" +
+                                    "Heure : " + SimpleDateFormat.getTimeInstance().format(new java.util.Date()) + "\n" +
+                                    "Position : " + positionMarker + "\n" +
+                                    "Puissance : " + puissance + "\n" +
+                                    "ECU : " + ecu;
+                            markersStellantis.setPosition(positionMarker);
+                            markersStellantis.setSnippet(carInfoStellantis);
+                        }
+                        else{
+                            Icon green = IconFactory.getInstance(requireContext()).fromResource(R.drawable.green_car);
+                            String carInfoStellantis = "Date : " + android.text.format.DateFormat.format("dd/MM/yyyy", new java.util.Date()) + "\n" +
+                                    "Heure : " + SimpleDateFormat.getTimeInstance().format(new java.util.Date()) + "\n" +
+                                    "Position : " + positionMarker + "\n" +
+                                    "Puissance : " + puissance + "\n" +
+                                    "ECU : " + ecu;
 
-                        markersStellantis.add(new MarkerOptions()
-                                .position(positionMarker)
-                                .title("ID : " + idMarker)
-                                .snippet(carInfoStellantis)
-                                .icon(green)
-                        );
-                        map.addMarkers(markersStellantis);
+                            markersStellantis = map.addMarker(new MarkerOptions()
+                                    .position(positionMarker)
+                                    .title("ID : " + idMarker)
+                                    .snippet(carInfoStellantis)
+                                    .icon(green));
+
+                            idMarkerStellantisList.add(idMarker);
+                            map.getMarkers();
+                        }
+
                         break;
+//                        Icon green = IconFactory.getInstance(requireContext()).fromResource(R.drawable.green_car);
+//                        String carInfoStellantis = "Date : " + android.text.format.DateFormat.format("dd/MM/yyyy", new java.util.Date()) + "\n" +
+//                                "Heure : " + SimpleDateFormat.getTimeInstance().format(new java.util.Date()) + "\n" +
+//                                "Position : " + positionMarker + "\n" +
+//                                "Puissance : " + puissance + "\n" +
+//                                "ECU : " + ecu;
+//
+//                        markersStellantis.add(new MarkerOptions()
+//                                .position(positionMarker)
+//                                .title("ID : " + idMarker)
+//                                .snippet(carInfoStellantis)
+//                                .icon(green)
+//                        );
+//                        map.addMarkers(markersStellantis);
+//                        break;
                 }
             default:
                 break;

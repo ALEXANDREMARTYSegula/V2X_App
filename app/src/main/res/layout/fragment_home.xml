@@ -56,6 +56,15 @@
         android:text="@string/crash"
         app:layout_constraintStart_toEndOf="@+id/btnMoveCar" />
 
+    <Button
+        android:id="@+id/btnMoveAutre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:backgroundTint="@color/mapbox_blue"
+        android:text="Move Autre"
+        app:layout_constraintStart_toEndOf="@+id/btnCrash" />
+
     <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/mapview"
         android:layout_width="match_parent"
