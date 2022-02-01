@@ -12,8 +12,13 @@ import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
@@ -27,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -44,7 +50,11 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.plugins.markerview.MarkerView;
+import com.mapbox.mapboxsdk.plugins.markerview.MarkerViewManager;
 import com.mapbox.mapboxsdk.style.layers.FillLayer;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
@@ -77,6 +87,7 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
     private int tcuConnected = 0, distanceCrash = 0, distanceInfo = 0, typeToast = 0, idMarkerOther = 9, puissance = 0, ecu = 0;
     private static int stellantisId = 0;
     private static int otherId = 0;
+    private boolean click=false;
 
     //Map
     private MapView mapView;
@@ -100,6 +111,14 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
     Marker markerTCUConnected;
     Marker markersStellantis;
     Marker markersOther;
+
+    private SymbolManager symbolManager;
+    private List<Symbol> symbols = new ArrayList<>();
+
+    //Car Info
+    ConstraintLayout carInfo;
+    LayoutInflater inflater2;
+    View layout2;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -131,6 +150,7 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                         )
                         ), style -> {
                         this.map = mapboxMap;
+                        symbolManager = new SymbolManager(mapView, map, style);
                         markerDisplay(1,1, posCar, puissance, ecu);
 
                         map.animateCamera(CameraUpdateFactory.newCameraPosition(
@@ -206,6 +226,8 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
             initPolygonCircleFillLayer();
             drawPolygonCircle(positionCar);
         });
+
+        //carInfo = (ConstraintLayout) requireView().findViewById(R.layout.toast_car);
 
         return root;
     }
@@ -390,6 +412,9 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public void markerDisplay(int typeMarker, int idMarker,LatLng positionMarker, int puissance, int ecu) {
+        inflater2 = requireActivity().getLayoutInflater();
+        layout2 = inflater2.inflate(R.layout.toast_car, requireView().findViewById(R.id.toast_container));
+        TextView numID = layout2.findViewById(R.id.tvNumID);
         switch (tcuConnected) {
             case 0:
                 Icon red = IconFactory.getInstance(requireContext()).fromResource(R.drawable.red_car);
@@ -419,18 +444,30 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                     case 1:
                         if(markerTCUConnected == null){
                             map.removeAnnotations();
-                            Icon blue = IconFactory.getInstance(requireContext()).fromResource(R.drawable.blue_car);
+                            //Icon blue = IconFactory.getInstance(requireContext()).fromResource(R.drawable.blue_car);
+                            Bitmap blue = BitmapFactory.decodeResource(getResources(), R.drawable.blue_car);
+                            map.getStyle().addImage("blue", blue);
                             String carInfoOK = "Date : " + android.text.format.DateFormat.format("dd/MM/yyyy", new java.util.Date()) + "\n" +
                                     "Heure : " + SimpleDateFormat.getTimeInstance().format(new java.util.Date()) + "\n" +
                                     "Position : " + positionMarker + "\n" +
                                     "Puissance : " + puissance + "\n" +
                                     "ECU : " + ecu;
 
-                            markerTCUConnected = map.addMarker(new MarkerOptions()
-                                    .position(positionMarker)
-                                    .title("ID : " + idMarker)
-                                    .snippet(carInfoOK)
-                                    .icon(blue));
+//                            markerTCUConnected = map.addMarker(new MarkerOptions()
+//                                    .position(positionMarker)
+//                                    .title("ID : " + idMarker)
+//                                    .snippet(carInfoOK)
+//                                    .icon(blue));
+
+                            symbolManager.create(new SymbolOptions()
+                                          .withLatLng(positionMarker)
+                                          .withIconImage("blue")
+//                                          .withTextField(carInfoOK)
+                                          .withIconRotate(45F));
+
+                            symbolManager.addClickListener(symbol -> {
+
+                            });
 
                             map.animateCamera(CameraUpdateFactory.newCameraPosition(
                                     new CameraPosition.Builder()
@@ -450,6 +487,9 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
 
                             markerTCUConnected.setPosition(positionMarker);
                             markerTCUConnected.setSnippet(carInfoOK);
+
+
+
                             map.animateCamera(CameraUpdateFactory.newCameraPosition(
                                     new CameraPosition.Builder()
                                             .target(positionMarker)
