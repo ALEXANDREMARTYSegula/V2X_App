@@ -7,6 +7,10 @@ import android.os.Looper;
 public class Utils {
     public static double lastLocationLatitude = 48.79542;
     public static double lastLocationLongitude = 1.98587;
+    public static double lastLocationLatitudeParking = 48.79637;
+    public static double lastLocationLongitudeParking = 1.98493;
+
+    //48.79637180238555, 1.9849369532631447
 
     public static void updateLastLocation(SharedPreferences sharedPreferences){
         lastLocationLatitude = sharedPreferences.getLong(GlobalConstants.lastLocationLatitude, Double.doubleToLongBits(lastLocationLatitude));

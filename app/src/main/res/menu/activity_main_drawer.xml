@@ -9,9 +9,9 @@
             android:icon="@drawable/ic_baseline_map_24"
             android:title="@string/menu_v2x" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_parking"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
+            android:title="@string/menu_parking" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"

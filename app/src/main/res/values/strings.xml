@@ -9,8 +9,8 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_v2x" translatable="false">V2X</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_parking" translatable="false">Parking</string>
+    <string name="menu_slideshow" translatable="false">Slideshow</string>
 
     <string name="access_token">sk.eyJ1IjoiZmNiYXNtIiwiYSI6ImNrd25sOGxjbDBqbmEycHF0cWtnaXV1bnYifQ.-ful9Mzei-dTkD6QKaLkoQ</string>
 

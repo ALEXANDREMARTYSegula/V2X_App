@@ -72,14 +72,13 @@ import java.util.List;
 
 public class V2XFragment extends Fragment implements OnMapReadyCallback {
 
-    private V2XViewModel v2XViewModel;
     private FragmentHomeBinding binding;
 
     private FillLayer fillLayer;
     private int fillLayerCounter = 0;
 
     Button btnStellantis, btnOther, btnTCU, btnMoveCar, btnCrash, btnMoveAutre;
-    private int marqueur = 0;
+    private final int marqueur = 0;
 
     public final ArrayList<Integer> idStellantis = new ArrayList<>();
     public final ArrayList<Integer> idOther = new ArrayList<>();
@@ -88,8 +87,8 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
 
     private int tcuConnected = 0, distanceCrash = 0, distanceInfo = 0, typeToast = 0, idMarkerOther = 9, puissance = 0, ecu = 0;
     private static int stellantisId = 0;
-    private static int otherId = 0;
-    private boolean click=false;
+//    private static final int otherId = 0;
+//    private boolean click=false;
 
     //Map
     private MapView mapView;
@@ -115,7 +114,6 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
     Marker markersOther;
 
     private SymbolManager symbolManager;
-    private List<Symbol> symbols = new ArrayList<>();
 
     //Car Info
     ConstraintLayout carInfo;
@@ -124,8 +122,7 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        v2XViewModel =
-                new ViewModelProvider(this).get(V2XViewModel.class);
+        V2XViewModel v2XViewModel = new ViewModelProvider(this).get(V2XViewModel.class);
 
         Mapbox.getInstance(this.requireContext(), getString(R.string.access_token));
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -183,11 +180,8 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                 LatLng carOther = new LatLng(48.796768,1.978605);
                 LatLng carOther2 = new LatLng(48.798772218369194,1.9941396447244915);
                 if(idMarkerOther == 9) markerDisplay(2,idMarkerOther, carOther, puissance, ecu);
-
                 if(idMarkerOther == 10)  markerDisplay(2,idMarkerOther, carOther2, puissance, ecu);
-
                 idMarkerOther++;
-                //OtherCar(carOther, carOther2, Integer.toString(R.string.idcar2));
             });
 
             btnTCU = requireView().findViewById(R.id.btnConnectionTCU);
@@ -452,7 +446,6 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                             Icon blue = IconFactory.getInstance(requireContext()).fromResource(R.drawable.blue_car);
                             //Bitmap blueCar = BitmapFactory.decodeResource(getResources(), R.drawable.blue_car);
                             //map.getStyle().addImage("blueCar", blueCar);
-
 
                             markerTCUConnected = map.addMarker(new MarkerOptions()
                                     .position(positionMarker)

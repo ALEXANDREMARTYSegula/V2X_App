@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.segula.v2x.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_parking"
+        android:name="com.segula.v2x.ui.Parking.ParkingFragment"
+        android:label="@string/menu_parking"
+        tools:layout="@layout/fragment_parking" />
 
     <fragment
         android:id="@+id/nav_slideshow"

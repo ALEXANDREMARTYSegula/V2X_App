@@ -16,8 +16,12 @@
         <entry key="..\:/Users/alex-/Documents/Workspace/V2X/app/src/main/res/layout/toast_info.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/alex-/Documents/Workspace/V2X/app/src/main/res/menu/activity_main_drawer.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/alex-/Documents/Workspace/V2X/app/src/main/res/menu/main.xml" value="0.36666666666666664" />
+        <entry key="app/src/main/res/layout/fragment_car_info.xml" value="0.2984375" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1897644927536232" />
+        <entry key="app/src/main/res/layout/fragment_parking.xml" value="0.44556765163297046" />
         <entry key="app/src/main/res/layout/toast.xml" value="0.2984375" />
         <entry key="app/src/main/res/layout/toast_car.xml" value="0.2984375" />
+        <entry key="app/src/main/res/menu/activity_main_drawer.xml" value="0.16979166666666667" />
       </map>
     </option>
   </component>

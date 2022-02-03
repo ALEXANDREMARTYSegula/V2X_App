@@ -5,9 +5,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -15,15 +14,14 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.google.android.material.navigation.NavigationView;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.navigation.NavigationView;
 import com.segula.v2x.databinding.ActivityMainBinding;
 import com.segula.v2x.ui.V2X.V2XFragment;
 import com.segula.v2x.utils.GlobalConstants;
@@ -41,14 +39,13 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import timber.log.Timber;
 import fr.segula.tcp.TCP;
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private AppBarConfiguration mAppBarConfiguration;
-    private ActivityMainBinding binding;
     private V2XFragment v2XFragment;
     private String ipAddress;
     public TCP tcpClient;
@@ -67,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        com.segula.v2x.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         res = getResources();
 
@@ -78,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_v2x, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_v2x, R.id.nav_parking, R.id.nav_slideshow)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -150,11 +147,11 @@ public class MainActivity extends AppCompatActivity {
             ipAddressString = InetAddress.getByAddress(ipByteArray).getHostAddress();
             ipAddressString = ipAddressString.substring(0, ipAddressString.lastIndexOf(".") + 1) + "1";
         } catch (UnknownHostException ex) {
-            Log.e(TAG, "Unable to get host address.");
+            Timber.d("Unable to get host address.");
             ipAddressString = "";
         }
 
-        Log.d(TAG, "getWifiIpAddress:  " + ipAddressString);
+        Timber.d("getWifiIpAddress:  %s", ipAddressString);
         return ipAddressString;
     }
 
@@ -183,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     synchronized private void connect() {
-        Log.d(TAG, "connect: ");
+        Timber.d("connect: ");
         if (tcpClient != null) {
             tcpClient.disconnect();
             tcpClient.registerConnectionStatusListener(new TcpStatusListener());
@@ -207,12 +204,12 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         if (!network_receive) {
                             alive++;
-                            Log.d(TAG, "run: alive ++ " + alive);
+                            Timber.d("run: alive ++ %s", alive);
                         } else {
                             alive = 0;
                         }
                         if (alive == 5) {
-                            Log.d(TAG, "run: alive 10 " + alive);
+                            Timber.d("run: alive 10 %s", alive);
                             connect();
                             cancel();
                         }
@@ -292,31 +289,6 @@ public class MainActivity extends AppCompatActivity {
                 //updateResources(homeFragment.requireContext(), "en");
 
                 break;
-
-//            case 2:
-//                language = GlobalConstants.Language.ESPAGNOL;
-//                updateResources(getBaseContext(), "es");
-//
-//                break;
-//
-//            case 3:
-//                language = GlobalConstants.Language.ALLEMAND;
-//                updateResources(getBaseContext(), "de");
-//
-//                break;
-//
-//            case 4:
-//                language = GlobalConstants.Language.CHINOIS;
-//                updateResources(getBaseContext(), "zh");
-//
-//                break;
-//
-//            case 5:
-//                language = GlobalConstants.Language.ITALIEN;
-//                updateResources(getBaseContext(), "it");
-//
-//                break;
-
             default:
                 break;
         }
