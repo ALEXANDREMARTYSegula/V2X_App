@@ -81,9 +81,11 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
     private final int marqueur = 0;
 
     public final ArrayList<Integer> idStellantis = new ArrayList<>();
+    public final ArrayList<Integer> idCrash = new ArrayList<>();
     public final ArrayList<Integer> idOther = new ArrayList<>();
     public final ArrayList<Integer> idMarkerOtherList = new ArrayList<>();
     public final ArrayList<Integer> idMarkerStellantisList = new ArrayList<>();
+    public final ArrayList<Integer> idMarkerCrashList = new ArrayList<>();
 
     private int tcuConnected = 0, distanceCrash = 0, distanceInfo = 0, typeToast = 0, idMarkerOther = 9, puissance = 0, ecu = 0;
     private static int stellantisId = 0;
@@ -112,6 +114,7 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
     Marker markerTCUConnected;
     Marker markersStellantis;
     Marker markersOther;
+    Marker markersCrash;
 
     private SymbolManager symbolManager;
 
@@ -160,7 +163,7 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                         ));
 
                         initPolygonCircleFillLayer();
-                        drawPolygonCircle(positionCar);
+                        //drawPolygonCircle(positionCar);
                     });
 
 
@@ -204,6 +207,8 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                 if(typeToast >= 2) typeToast = 0;
                 typeToast ++;
                 showTypeToast(typeToast, getString(R.string.idcar1));
+                posCar = new LatLng(48.79877,1.99501);
+                markerDisplay(4,1, posCar, puissance, ecu);
             });
 
             btnMoveAutre = requireView().findViewById(R.id.btnMoveAutre);
@@ -247,8 +252,11 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
         View layout = inflater1.inflate(R.layout.toast, requireView().findViewById(R.id.toast_container));
         TextView text = layout.findViewById(R.id.tvDanger);
         LayoutInflater inflater2 = requireActivity().getLayoutInflater();
-        View layout2 = inflater2.inflate(R.layout.toast_car, requireView().findViewById(R.id.toast_container));
-        TextView numID = layout2.findViewById(R.id.tvNumID);
+        View layout2 = inflater2.inflate(R.layout.toast_info, requireView().findViewById(R.id.toast_info_container));
+        TextView text2 = layout2.findViewById(R.id.tvInfo);
+        LayoutInflater inflater3 = requireActivity().getLayoutInflater();
+        View layout3 = inflater3.inflate(R.layout.toast_car, requireView().findViewById(R.id.toast_container));
+        TextView numID = layout3.findViewById(R.id.tvNumID);
 
         switch (typeToast) {
             case 1:
@@ -256,20 +264,20 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                 text.setText(getString(R.string.crashat) + " " + distanceCrash + " m");
 
                 Toast toast = new Toast(this.getContext());
-                toast.setGravity(Gravity.TOP, 0, 0);
+                toast.setGravity(Gravity.TOP, 0, 90);
                 toast.setDuration(Toast.LENGTH_LONG);
                 toast.setView(layout);
                 toast.show();
                 break;
             case 2:
-                layout.setBackground(getResources().getDrawable(R.drawable.layout_border_info));
+                layout2.setBackground(getResources().getDrawable(R.drawable.layout_border_info));
 
-                text.setText(getString(R.string.infoat) + " " + distanceInfo + " m");
-                text.setTextColor(getResources().getColor(R.color.black));
+                text2.setText(getString(R.string.infoat) + " " + distanceInfo + " m");
+                text2.setTextColor(getResources().getColor(R.color.black));
                 Toast toast2 = new Toast(this.getContext());
-                toast2.setGravity(Gravity.TOP, 0, 0);
+                toast2.setGravity(Gravity.TOP, 0, 90);
                 toast2.setDuration(Toast.LENGTH_LONG);
-                toast2.setView(layout);
+                toast2.setView(layout2);
                 toast2.show();
                 break;
             case 3:
@@ -522,6 +530,25 @@ public class V2XFragment extends Fragment implements OnMapReadyCallback {
                                     .icon(green));
 
                             idMarkerStellantisList.add(idMarker);
+                            map.getMarkers();
+                        }
+
+                        break;
+
+                    case 4:
+                        if(idMarkerCrashList.contains(idMarker)){
+                            markersCrash.setPosition(positionMarker);
+                            //markersCrash.setSnippet(carInfo);
+                        }
+                        else{
+                            Icon crashMarker = IconFactory.getInstance(requireContext()).fromResource(R.drawable.crash40);
+
+                            markersCrash = map.addMarker(new MarkerOptions()
+                                    .position(positionMarker)
+                                    .title("ID : " + idMarker)
+                                    .icon(crashMarker));
+
+                            idMarkerCrashList.add(idMarker);
                             map.getMarkers();
                         }
 

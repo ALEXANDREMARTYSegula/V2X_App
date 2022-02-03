@@ -84,6 +84,7 @@ public class ParkingFragment extends Fragment implements OnMapReadyCallback {
                 this.map = mapboxMap;
                 symbolManager = new SymbolManager(mapView, map, style);
                 symbolManager.setIconAllowOverlap(true);  //your choice t/f
+                symbolManager.setTextAllowOverlap(true);  //your choice t/f
                 markerDisplay(1,1, posCar, puissance, ecu, 0);
 
                 symbolManager.addClickListener(new OnSymbolClickListener() {
